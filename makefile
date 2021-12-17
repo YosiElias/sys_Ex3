@@ -6,13 +6,13 @@ OBJECT = advancedClassificationLoop.o basicClassification.o
 # C2COMPILE = func.c
 C2COMPILE = main.c
 #make all
-all: main 
+all: stringProg 
 
 #make main:
 main.o: $(C2COMPILE) 
 	$(CC) $(CFLAGS) -c $(C2COMPILE) -o main.o
-main: main.o
-	$(CC) $(CFLAGS) -o main main.o
+stringProg: main.o
+	$(CC) $(CFLAGS) -o stringProg main.o
 
 #make connections:
 connections: main.o libmath.so

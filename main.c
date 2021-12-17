@@ -1,18 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define WORD 30
+#define TXT 1024
 
 void gimatriaFunc();   //A
 void atbashFunc();  //B
 // void atbashFunc(char word, char text);   //C
 void atbashConvert(char* str);  //for B
 
+void printSub(char *text, int word, int i);
+int anagram(int size);
 
-
-void printSub(char *text, int word);
-
-char word[31], text[258]; //global variable
-char wordAtbash[31], textAtbash[258]; //global variable
+char word[31], text[1026]; //global variable
+char wordAtbash[31]; //textAtbash[258]; //global variable
 
 
 
@@ -67,7 +68,7 @@ int printSeqGim(char *s, int size, int wordGim){
             f++;
         }
     }
-    return 0;
+    return 1;
 }
 
 void gimatriaFunc()
@@ -111,12 +112,13 @@ int main()
     printf("\nAtbash Sequences: ");
     atbashFunc();
     printf("\nAnagram Sequences: ");
+    anagram(strlen(text));
     printf("\n");
 
 
     // printf("%s", word);     //Todo: for self testing
     // printf("\n%s", text);     //Todo: for self testing
-    return 0;
+    return 1;
 }
 
 
@@ -149,56 +151,57 @@ void atbashConvertWord()
     // return ans;
 }
 
-void atbashConvertText()
-{
-    // char ans[strlen(str)+1];
-    int i=0;
-    while(text[i]!='\0')
-    {
-        if(!((text[i]>=0&&text[i]<65)||(text[i]>90&&text[i]<97)||(text[i]>122&&text[i]<=127)))
-        {
-            if(text[i]>='A'&&text[i]<='Z')
-                textAtbash[i] = 'Z'+'A'-text[i];
-            // printf("%c",'Z'+'A'-str[i]);
-            if(text[i]>='a'&&text[i]<='z')
-                textAtbash[i] = 'z'+'a'-text[i];
-            // printf("%c",'z'+'a'-str[i]);
-        }
-
-        if(((text[i]>=0&&text[i]<65)||(text[i]>90&&text[i]<97)||(text[i]>122&&text[i]<=127)))
-        {
-            textAtbash[i] = text[i];
-            // printf("%c",str[i]);
-        }
-
-        i++;
-    }
-    // printf("%s", textAtbash);
-    // return ans;
-}
+//void atbashConvertText()
+//{
+//    // char ans[strlen(str)+1];
+//    int i=0;
+//    while(text[i]!='\0')
+//    {
+//        if(!((text[i]>=0&&text[i]<65)||(text[i]>90&&text[i]<97)||(text[i]>122&&text[i]<=127)))
+//        {
+//            if(text[i]>='A'&&text[i]<='Z')
+//                text[i] = 'Z'+'A'-text[i];
+//            // printf("%c",'Z'+'A'-str[i]);
+//            if(text[i]>='a'&&text[i]<='z')
+//                text[i] = 'z'+'a'-text[i];
+//            // printf("%c",'z'+'a'-str[i]);
+//        }
+//
+//        if(((text[i]>=0&&text[i]<65)||(text[i]>90&&text[i]<97)||(text[i]>122&&text[i]<=127)))
+//        {
+//            text[i] = text[i];
+//            // printf("%c",str[i]);
+//        }
+//
+//        i++;
+//    }
+//    // printf("%s", textAtbash);
+//    // return ans;
+//}
 
 
 void atbashFunc()
 {
     atbashConvertWord();
-    atbashConvertText();
-    // char *temp = malloc(strlen(text));
-    // char* sWord = wordAtbash;
-    char* sTempText = textAtbash;
-    char* sTempRevText = textAtbash;
-    // char* sRevWord = &wordAtbash[strlen(wordAtbash)-1];
+//    atbashConvertText();
+//    char *temp = malloc(strlen(text));
+//    char* sWord = &wordAtbash;
+    char* sTempText = text;
+    char* sTempRevText = text;
+//    char* sRevWord = &wordAtbash[strlen(wordAtbash)-1];
     // char* curWord = &wordAtbash;
 //    char* curRevWord = &wordAtbash[strlen(wordAtbash)-1];
     // char *curText = textAtbash[0];
     // char ans[258], ansRev[258];
-    int lenghText = strlen(textAtbash), lenghWord =strlen(wordAtbash),
+    int lenghText = strlen(text), lenghWord =strlen(wordAtbash),
             countWord = 0, countRevWord = 0,
-            curText=0, curWord=0, curRevWord=lenghWord-1;
-    printf("\n----%s----", textAtbash);
+            curText=0, curWord=0, curRevWord=lenghWord-1,
+            firstTime=1;
+//    printf("\n----%s----", textAtbash);
 
     for (int i=0; i<lenghText; i++)
     {
-        if (textAtbash[curText]==' ' || textAtbash[curText]=='\t' || textAtbash[curText]=='\n')
+        if (text[curText]==' ' || text[curText]=='\t' || text[curText]=='\n')
         {
             if (countWord != 0)
                 countWord++;
@@ -211,39 +214,72 @@ void atbashFunc()
         }
         else
         {
-            if (textAtbash[curText] == wordAtbash[curWord]) {
+            if (text[curText] == wordAtbash[curWord]) {
                 curWord++;
                 countWord++;
-//            curText++;
                 if (curWord == lenghWord) {
-                    printf("\nans:");
-                    printSub(sTempText, countWord);
+//                    printf("\nans:");
+                    printSub(sTempText, countWord, firstTime);
+                    firstTime=0;
                     countWord = 0;
                     curWord = 0;
+                    sTempText = &text[curText + 1];//init new start to word in text
                 }
             }
             else
             {
-                countWord=0;
-                curWord=0;
-                if (curText != lenghText-1)  //Todo: need try without this if
-                    sTempText = &textAtbash[curText+1];//init new start to word in text
+                if (text[curText] == wordAtbash[0])
+                {
+                    curWord=1;
+                    countWord=1;
+                    sTempText = &text[curText];//init new start to word in text
+                    if (curWord == lenghWord) {
+//                        printf("\nans:");
+                        printSub(sTempText, countWord, firstTime);
+                        firstTime=0;
+                        countWord = 0;
+                        curWord = 0;
+                        sTempText = &text[curText + 1];//init new start to word in text
+                    }
+                } else {
+                    countWord = 0;
+                    curWord = 0;
+                    if (curText != lenghText - 1)
+                        sTempText = &text[curText + 1];//init new start to word in text
+                }
             }
-            if (textAtbash[curText] == wordAtbash[curRevWord]) {
+            if (text[curText] == wordAtbash[curRevWord]) {
                 curRevWord--;
                 countRevWord++;
                 if (curRevWord == -1) {
-                    printf("\nans REV:");
-                    printSub(sTempRevText, countRevWord);
+//                    printf("\nans REV:");
+                    printSub(sTempRevText, countRevWord, firstTime);
+                    firstTime=0;
                     countRevWord = 0;
                     curRevWord = lenghWord-1;
+                    sTempRevText = &text[curText + 1];//init new start to word in text
                 }
             }  else
             {
-                countRevWord=0;
-                curRevWord=lenghWord-1;
-                if (curText != lenghText-1)  //Todo: need try without this if
-                    sTempRevText = &textAtbash[curText+1];//init new start to word in text
+                if (text[curText] == wordAtbash[lenghWord - 1])
+                {
+                    curRevWord= lenghWord - 2;
+                    countRevWord=1;
+                    sTempRevText = &text[curText];//init new start to word in text
+                    if (curRevWord == -1) {
+//                        printf("\nans REV:");
+                        printSub(sTempRevText, countRevWord, firstTime);
+                        firstTime=0;
+                        countRevWord = 0;
+                        curRevWord = lenghWord-1;
+                        sTempRevText = &text[curText + 1];//init new start to word in text
+                    }
+                } else {
+                    countRevWord = 0;
+                    curRevWord = lenghWord - 1;
+                    if (curText != lenghText - 1)
+                        sTempRevText = &text[curText + 1];//init new start to word in text
+                }
             }
         }
         curText++;
@@ -251,9 +287,84 @@ void atbashFunc()
 
 }
 
-void printSub(char *data, int size) {
-    for (int i = 0; i < size; ++i) {
-        printf("%c", data[0]);
-        data++;
+void printSub(char *text, int word, int first) {
+    if (!first)
+        printf("~");
+    for (int i = 0; i < word; ++i) {
+        printf("%c", text[0]);
+        text++;
     }
+}
+
+
+
+int cmp(const void *a, const void *b) { return *(char *)a - *(char *)b; }
+int anagram(int size) {
+//    printf("Anagram Sequences: ");
+    int a = 0, b = 0, count = 0, flag = 0;
+    int length = strlen(word);
+    for (int i = 0; i < length; i++) {
+        if (*(word + i) != 32)
+            count++;
+    }
+    int spaces = length - count;
+    char temp[length + 1];
+    char wordNotSpace[length + 1 - spaces];
+    strcpy(temp, word);
+    qsort(temp, strlen(temp), 1, (cmp));
+    strcpy(wordNotSpace, temp + spaces);
+    int count2 = 0;
+    if (b == 0 && *(text + b) != 32) {
+        count2++;
+    }
+    while (b < size) {
+        if (*(text + a) == 32) {
+            a++;
+            continue;
+        }
+        if (count2 < count) {
+            b++;
+            if (b < size && *(text + b) != 32) {
+                count2++;
+            }
+            continue;
+        }
+        if (count2 > count) {
+            if (*(word + a) != 32) {
+                count2--;
+            }
+            a++;
+            continue;
+        }
+        if (count == count2) {
+            int len = b - a + 1;
+            char *dest = (char *) malloc(sizeof(char) * (len + 1));
+            if (dest==NULL)
+                return 0;   //test of malloc
+            for (int i = a; i <= b && (*(text + i) != '\0'); i++) {
+                *dest = *(text + i);
+                dest++;
+            }
+            *dest = '\0';
+            int spaces2 = len - count2;
+            char temp2[len + 1];
+            char wordNotSpace2[len + 1 - spaces2];
+            strcpy(temp2, dest - len);
+            qsort(temp2, strlen(temp2), 1, (cmp));
+            strcpy(wordNotSpace2, temp2 + spaces2);
+
+            if (strcmp(wordNotSpace, wordNotSpace2) == 0) {
+                if (flag == 1) {
+                    printf("~%s", dest - len);
+                } else {
+                    printf("%s", dest - len);
+                    flag = 1;
+                }
+            }
+            count2--;
+            a++;
+//            free(dest); //Todo: check if good place to free
+        }
+    }
+    return 1;
 }
