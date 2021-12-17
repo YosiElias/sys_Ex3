@@ -3,8 +3,8 @@ CFLAGS = -Wall -g
 AR=ar
 OBJECTS_MAIN=main.o
 OBJECT = advancedClassificationLoop.o basicClassification.o 
-C2COMPILE = func.c
-# C2COMPILE = main.c
+# C2COMPILE = func.c
+C2COMPILE = main.c
 #make all
 all: main 
 
@@ -58,4 +58,4 @@ libclassloops.so: $(OBJECTS_LOOP) NumClass.h
 .PHONY: clean all
 
 clean:
-	rm -f *.o *.a *.so connections
+	rm -f *.o *.a *.so main

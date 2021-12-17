@@ -67,7 +67,7 @@ int printSeqGim(char *s, int size, int wordGim){
             f++;
         }
     }
-    return 1;
+    return 0;
 }
 
 void gimatriaFunc()
@@ -116,7 +116,7 @@ int main()
 
     // printf("%s", word);     //Todo: for self testing
     // printf("\n%s", text);     //Todo: for self testing
-    return 1;
+    return 0;
 }
 
 
