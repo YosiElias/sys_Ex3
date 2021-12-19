@@ -58,4 +58,4 @@ libclassloops.so: $(OBJECTS_LOOP) NumClass.h
 .PHONY: clean all
 
 clean:
-	rm -f *.o *.a *.so main
+	rm -f *.o *.a *.so stringProg

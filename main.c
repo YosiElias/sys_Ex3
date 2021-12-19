@@ -28,39 +28,40 @@ int gimatria(char c){
     return sum % 64;
 }
 
-int printSeqGim(char *s, int size, int wordGim){
-    // printf("Gematria Sequences: ");
+int printSeqGim(int size) {
+    int wordGim = 0;
+    for (int i = 0;i< strlen(word);i++)
+        wordGim += gimatria(word[i]);
+//    printf("Gematria Sequences: ");
     int count = 0;
-    char *f = s, *l = s;
+    char *f = text, *l = text;
     int a = 0, b = 0;
     int sum = gimatria(*f);
     while (b < size) {
-
-        if (sum < wordGim ){
+        while (gimatria(*f) == 0 && a < size) {
+            a++;
+            f++;
+        }
+        while (gimatria(*l) == 0 && b < size) {
             b++;
             l++;
             sum += gimatria(*l);
-            if (gimatria(*l) == 0){
-                b++;
-                l++;
-                sum += gimatria(*l);
-            }
         }
-        else if (sum > wordGim ){
+        if (sum < wordGim) {
+            b++;
+            l++;
+            sum += gimatria(*l);
+        }
+        else if (sum > wordGim) {
             sum -= gimatria(*f);
             a++;
             f++;
-            if (gimatria(*f) == 0){
-                a++;
-                f++;
-            }
         }
         else {
-            if (count == 1){
-                printf("~%.*s", b-a+1, s + a);
-            }
-            else{
-                printf("%.*s", b-a+1, s + a);
+            if (count == 1) {
+                printf("~%.*s", b - a + 1, text + a);
+            } else {
+                printf("%.*s", b - a + 1, text + a);
                 count = 1;
             }
             sum -= gimatria(*f);
@@ -71,15 +72,6 @@ int printSeqGim(char *s, int size, int wordGim){
     return 0;
 }
 
-void gimatriaFunc()
-{
-    int length = strlen( word );
-    int gim = 0;
-    for (int i=0;i<length;i++){
-        gim += gimatria(word[i]);
-    }
-    printSeqGim(text,strlen(text),gim);
-}
 
 
 int main()
@@ -95,7 +87,6 @@ int main()
         i++;
     }
     word[i] = '\0';
-
     i=0;
     temp = getchar();
     while(temp!='~')
@@ -105,17 +96,14 @@ int main()
         i++;
     }
     text[i] = '\0';
-
     //Functin on input:
     printf("Gematria Sequences: ");
-    gimatriaFunc();
+    printSeqGim(strlen(text));
     printf("\nAtbash Sequences: ");
     atbashFunc();
     printf("\nAnagram Sequences: ");
     anagram(strlen(text));
-    printf("\n");
-
-
+    // printf("\n");
     // printf("%s", word);     //Todo: for self testing
     // printf("\n%s", text);     //Todo: for self testing
     return 0;
@@ -150,34 +138,6 @@ void atbashConvertWord()
     // printf("%s", wordAtbash);
     // return ans;
 }
-
-//void atbashConvertText()
-//{
-//    // char ans[strlen(str)+1];
-//    int i=0;
-//    while(text[i]!='\0')
-//    {
-//        if(!((text[i]>=0&&text[i]<65)||(text[i]>90&&text[i]<97)||(text[i]>122&&text[i]<=127)))
-//        {
-//            if(text[i]>='A'&&text[i]<='Z')
-//                text[i] = 'Z'+'A'-text[i];
-//            // printf("%c",'Z'+'A'-str[i]);
-//            if(text[i]>='a'&&text[i]<='z')
-//                text[i] = 'z'+'a'-text[i];
-//            // printf("%c",'z'+'a'-str[i]);
-//        }
-//
-//        if(((text[i]>=0&&text[i]<65)||(text[i]>90&&text[i]<97)||(text[i]>122&&text[i]<=127)))
-//        {
-//            text[i] = text[i];
-//            // printf("%c",str[i]);
-//        }
-//
-//        i++;
-//    }
-//    // printf("%s", textAtbash);
-//    // return ans;
-//}
 
 
 void atbashFunc()
@@ -304,7 +264,7 @@ int anagram(int size) {
     int a = 0, b = 0, count = 0, flag = 0;
     int length = strlen(word);
     for (int i = 0; i < length; i++) {
-        if (*(word + i) != 32)
+        if (*(word + i) != ' ')
             count++;
     }
     int spaces = length - count;
@@ -314,23 +274,23 @@ int anagram(int size) {
     qsort(temp, strlen(temp), 1, (cmp));
     strcpy(wordNotSpace, temp + spaces);
     int count2 = 0;
-    if (b == 0 && *(text + b) != 32) {
+    if (b == 0 && *(text + b) != ' ' && *(text + b) != '\n' && *(text + b) != '\t') {
         count2++;
     }
     while (b < size) {
-        if (*(text + a) == 32) {
+        if (*(text + a) == ' ' || *(text + a) == '\n' || *(text + a) == '\t') {
             a++;
             continue;
         }
         if (count2 < count) {
             b++;
-            if (b < size && *(text + b) != 32) {
+            if (b < size && *(text + b) != ' ' && *(text + b) != '\n' && *(text + b) != '\t') {
                 count2++;
             }
             continue;
         }
         if (count2 > count) {
-            if (*(word + a) != 32) {
+            if (*(text + a) != ' ' && *(text + a) != '\n' && *(text + a) != '\t' ) {
                 count2--;
             }
             a++;
@@ -339,32 +299,33 @@ int anagram(int size) {
         if (count == count2) {
             int len = b - a + 1;
             char *dest = (char *) malloc(sizeof(char) * (len + 1));
-            if (dest==NULL)
-                return 0;   //test of malloc
-            for (int i = a; i <= b && (*(text + i) != '\0'); i++) {
-                *dest = *(text + i);
-                dest++;
-            }
-            *dest = '\0';
-            int spaces2 = len - count2;
-            char temp2[len + 1];
-            char wordNotSpace2[len + 1 - spaces2];
-            strcpy(temp2, dest - len);
-            qsort(temp2, strlen(temp2), 1, (cmp));
-            strcpy(wordNotSpace2, temp2 + spaces2);
-
-            if (strcmp(wordNotSpace, wordNotSpace2) == 0) {
-                if (flag == 1) {
-                    printf("~%s", dest - len);
-                } else {
-                    printf("%s", dest - len);
-                    flag = 1;
+            char* toFree = dest;
+            if (dest != NULL){
+                for (int i = a; i <= b && (*(text + i) != '\0'); i++) {
+                    *dest = *(text + i);
+                    dest++;
                 }
+                *dest = '\0';
+                int spaces2 = len - count2;
+                char temp2[len + 1];
+                char wordNotSpace2[len + 1 - spaces2];
+                strcpy(temp2, dest - len);
+                qsort(temp2, strlen(temp2), 1, cmp);
+                strcpy(wordNotSpace2, temp2 + spaces2);
+
+                if (strcmp(wordNotSpace, wordNotSpace2) == 0) {
+                    if (flag == 1) {
+                        printf("~%s", dest - len);
+                    } else {
+                        printf("%s", dest - len);
+                        flag = 1;
+                    }
+                }
+                count2--;
+                a++;
             }
-            count2--;
-            a++;
-//            free(dest); //Todo: check if good place to free
+            free(toFree);
         }
     }
-    return 0;
+    return 1;
 }
